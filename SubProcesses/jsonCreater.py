@@ -13,8 +13,7 @@ def createJson(dict):
 
 
 def saveJson(dict):
-    JsonFile = createJson(dict)
-    fileName = path + datetime.datetime.now().strftime("%Y-%m-%d %H-%M-%S")
+    fileName = path + datetime.datetime.now().strftime("%Y-%m-%d %H-%M-%S") + ".json"
     with open(fileName, 'w') as f:
-        json.dump(dict, f)
+        json.dump(dict, f, indent=4)
     f.close()
