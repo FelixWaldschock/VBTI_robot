@@ -3,7 +3,7 @@ import datetime
 import os
 import numpy as np
 
-
+"""
 #
 class NumpyEncoder(json.JSONEncoder):
     """ Special json encoder for numpy types """
@@ -21,9 +21,8 @@ class NumpyEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 #
 
-
+"""
 sep = os.path.sep
-
 path = "Files" + sep
 
 
