@@ -1,9 +1,12 @@
 import os
 import pyrealsense2 as rs
+import numpy as np
 
+pipe = None
+cfg = None
 
 def initCamera():
-
+    global pipe, cfg
     # Create Pipeline
     pipe = rs.pipeline()
     cfg = rs.config()
@@ -36,9 +39,15 @@ def initCamera():
 
     return True
 
+def stopCamera():
+    pipe.stop()
+    return True
+
 
 def Capture():
+    pipe.start(cfg)
     frameset = pipe.wait_for_frames()
     depth_frame = frameset.get_depth_frame()
     color_frame = frameset.get_color_frame()
+    stopCamera()
     return np.asanyarray(depth_frame.get_data()), np.asanyarray(color_frame.get_data())

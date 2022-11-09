@@ -3,7 +3,7 @@ import random
 import datetime
 import numpy as np
 import camerModule as cm
-
+import parameters as p
 
 """
 Random JSON generation
@@ -28,8 +28,8 @@ print("Camera initialized: " + str(cm.initCamera()))
 
 # Capture image
 Deptharray, RGBarray = cm.Capture()
-Xpos, YPos, Zpos = 1
-TimeStamp = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+Xpos = Ypos = Zpos = 1
+TimeStamp = datetime.datetime.now().strftime(p.dateformatting)
 
 # Structure of the JSON file containing capture information
 dict = {"Xpos": Xpos,
@@ -42,3 +42,5 @@ dict = {"Xpos": Xpos,
 
 
 jc.saveJson(dict)
+
+exit()

@@ -2,9 +2,9 @@ import json
 import datetime
 import os
 import numpy as np
+import parameters as p
 
-"""
-#
+
 class NumpyEncoder(json.JSONEncoder):
     """ Special json encoder for numpy types """
 
@@ -19,9 +19,7 @@ class NumpyEncoder(json.JSONEncoder):
         elif isinstance(obj, (np.ndarray,)):
             return obj.tolist()
         return json.JSONEncoder.default(self, obj)
-#
 
-"""
 sep = os.path.sep
 path = "Files" + sep
 
@@ -32,7 +30,7 @@ def createJson(dict):
 
 
 def saveJson(dict):
-    fileName = path + datetime.datetime.now().strftime("%Y-%m-%d %H-%M-%S") + ".json"
+    fileName = path + datetime.datetime.now().strftime(p.dateformatting) + ".json"
     with open(fileName, 'w') as f:
         json.dump(dict, f, indent=4, cls=NumpyEncoder)
     f.close()
