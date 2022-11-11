@@ -1,9 +1,10 @@
-import jsonCreater as jc
+import jsonHandler as jh
 import random
 import datetime
 import numpy as np
 import camerModule as cm
 import parameters as p
+import DataVisualisation as dv
 
 """
 Random JSON generation
@@ -20,9 +21,8 @@ Zpos = random.randint(0, 100)
 RGBarray = np.random.randint(0, 255, rgbShape)
 Deptharray = np.random.randint(0, 2000, depthShape)
 TimeStamp = datetime.datetime.now().strftime("%Y-%m-%d %H-%M-%S")
-
 """
-
+"""
 # Init camera
 print("Camera initialized: " + str(cm.initCamera()))
 
@@ -40,7 +40,9 @@ dict = {"Xpos": Xpos,
         "TimeStamp": TimeStamp
         }
 
+# jh.saveJson(dict)
+"""
+dv.showCapture()
 
-jc.saveJson(dict)
 
 exit()

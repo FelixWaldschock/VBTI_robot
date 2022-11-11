@@ -20,8 +20,21 @@ class NumpyEncoder(json.JSONEncoder):
             return obj.tolist()
         return json.JSONEncoder.default(self, obj)
 
+
 sep = os.path.sep
 path = "Files" + sep
+
+
+def CreateDict(Xpos, Ypos, Zpos, RGBarray, Deptharray, Timestamp):
+    # Structure of the JSON file containing capture information
+    dict = {"Xpos": Xpos,
+            "YPos": Ypos,
+            "ZPos": Zpos,
+            "RGBarray": RGBarray,
+            "Deptharray": Deptharray,
+            "TimeStamp": TimeStamp
+            }
+    return dict
 
 
 def createJson(dict):
@@ -29,8 +42,12 @@ def createJson(dict):
     return JsonFile
 
 
-def saveJson(dict):
+def saveDict2Json(dict):
     fileName = path + datetime.datetime.now().strftime(p.dateformatting) + ".json"
     with open(fileName, 'w') as f:
         json.dump(dict, f, indent=4, cls=NumpyEncoder)
     f.close()
+
+
+def Json2Dict(file):
+    return file
