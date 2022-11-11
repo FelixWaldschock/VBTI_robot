@@ -35,12 +35,12 @@ TimeStamp = datetime.datetime.now().strftime(p.dateformatting)
 dict = {"Xpos": Xpos,
         "YPos": Ypos,
         "ZPos": Zpos,
-        "RGBarray": RGBarray,
-        "Deptharray": Deptharray,
+        "RGBarray": RGBarray.tolist(),
+        "Deptharray": Deptharray.tolist(),
         "TimeStamp": TimeStamp
         }
 
-# jh.saveJson(dict)
+jh.saveDict2Json(dict)
 """
 dv.showCapture()
 
