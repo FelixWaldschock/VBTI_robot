@@ -49,16 +49,15 @@ def stopCamera():
 def CaptureBurst(num, mode):  # mode = 0 for depth, mode = 1 for Both
     starttime = os.cpu_count()
     pipe.start(cfg)
-    depth_frame = np.empty(720, 1280)
+    depth_frame = []
     color_frame = []
     if (mode == 0):
         for _ in range(num):
             frameset = pipe.wait_for_frames()
-            depth_frame += (frameset.get_depth_frame())
-
-        depth_frame = depth_frame / num
+            depth_frame.append(frameset.get_depth_frame())
         color_frame = frameset.get_color_frame()
-    if (mode == 1):
+        print("Capture in Mode 0 complete")
+    elif (mode == 1):
         for _ in range(num):
             frameset = pipe.wait_for_frames()
             depth_frame = frameset.get_depth_frame()
@@ -70,8 +69,9 @@ def CaptureBurst(num, mode):  # mode = 0 for depth, mode = 1 for Both
     stopCamera()
     stoptime = os.cpu_count()
     captureDuration = stoptime - starttime
-    return np.asanyarray(depth_frame.get_data()), np.asanyarray(color_frame.get_data()), captureDuration
-
+    print("Capture Duration: ", captureDuration)
+    #return np.asanyarray(depth_frame.get_data()), np.asanyarray(color_frame.get_data()), captureDuration
+    return depth_frame, color_frame, captureDuration
 
 def Capture():
     pipe.start(cfg)

@@ -86,8 +86,7 @@ def encodeDepth(array):
     return output
 
 
-# arr = np.array([[[1, 2, 3], [4, 5, 6], [4, 5, 6]],
-#                [[4, 5, 6], [4, 5, 6], [7, 8, 9]]])
+"""
 inputFile = open("SubProcesses/Files/2022-11-11_12-07-30.json", "r").read()
 
 # parse json to dict
@@ -101,5 +100,5 @@ decoded = decodeRGB(encoded, arr.shape[0], arr.shape[1])  # 720, 1280
 print("Is decoded == arr?", np.equal(decoded, arr).all())
 print(f'Original array size: {arr.shape}')
 print(f'Encoded array size: {len(encoded)}')
-
+"""
 # print(encoded)

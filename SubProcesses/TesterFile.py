@@ -10,7 +10,9 @@ import Compressor as comp
 
 def CaptureImage():
 
-        Deptharray, RGBarray, CaptureDuration = cm.CaptureBurst(5)
+        #Deptharray, RGBarray, CaptureDuration = cm.CaptureBurst(5,mode=0)
+        Deptharray, RGBarray = cm.Capture()
+        CaptureDuration = 0
         Xpos = Ypos = Zpos = 1
         TimeStamp = datetime.datetime.now().strftime(p.dateformatting)
 
@@ -25,13 +27,11 @@ def CaptureImage():
                 }
         return dict
 
+cm.initCamera()
+dict = CaptureImage()
 
 jh.saveDict2Json(dict)
-
+exit()
 # Choose action
 
-"""
-dv.showCapture()
 
-
-exit()
