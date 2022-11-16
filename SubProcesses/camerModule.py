@@ -88,4 +88,4 @@ def Capture():
     stopCamera()
     stoptime = time.time()
     captureDuration = stoptime - starttime
-    return np.asanyarray(depth_frame.get_data()), np.asanyarray(color_frame.get_data()), captureDuration
+    return np.asanyarray(depth_frame.get_data()).tolist(), np.asanyarray(color_frame.get_data()).tolist(), captureDuration

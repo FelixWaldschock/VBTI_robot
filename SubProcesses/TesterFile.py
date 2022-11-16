@@ -12,8 +12,8 @@ import Compressor as comp
 
 def CaptureImage():
 
-        Deptharray, RGBarray, CaptureDuration = cm.CaptureBurst(5,mode=0)
-        #Deptharray, RGBarray = cm.Capture()
+        #Deptharray, RGBarray, CaptureDuration = cm.CaptureBurst(5,mode=0)
+        Deptharray, RGBarray, CaptureDuration = cm.Capture()
         Xpos = Ypos = Zpos = 1
         TimeStamp = datetime.datetime.now().strftime(p.dateformatting)
 
