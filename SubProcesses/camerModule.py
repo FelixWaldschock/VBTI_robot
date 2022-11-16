@@ -5,6 +5,7 @@ import numpy as np
 pipe = None
 cfg = None
 
+
 def initCamera():
     global pipe, cfg
     # Create Pipeline
@@ -39,9 +40,37 @@ def initCamera():
 
     return True
 
+
 def stopCamera():
     pipe.stop()
     return True
+
+
+def CaptureBurst(num, mode):  # mode = 0 for depth, mode = 1 for Both
+    starttime = os.cpu_count()
+    pipe.start(cfg)
+    depth_frame = np.empty(720, 1280)
+    color_frame = []
+    if (mode == 0):
+        for _ in range(num):
+            frameset = pipe.wait_for_frames()
+            depth_frame += (frameset.get_depth_frame())
+
+        depth_frame = depth_frame / num
+        color_frame = frameset.get_color_frame()
+    if (mode == 1):
+        for _ in range(num):
+            frameset = pipe.wait_for_frames()
+            depth_frame = frameset.get_depth_frame()
+            color_frame = frameset.get_color_frame()
+
+    else:
+        (print("Error: Burst mode not defined"))
+
+    stopCamera()
+    stoptime = os.cpu_count()
+    captureDuration = stoptime - starttime
+    return np.asanyarray(depth_frame.get_data()), np.asanyarray(color_frame.get_data()), captureDuration
 
 
 def Capture():
