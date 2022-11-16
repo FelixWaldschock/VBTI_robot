@@ -8,11 +8,12 @@ import DataVisualisation as dv
 import Compressor as comp
 
 
+
+
 def CaptureImage():
 
-        #Deptharray, RGBarray, CaptureDuration = cm.CaptureBurst(5,mode=0)
-        Deptharray, RGBarray = cm.Capture()
-        CaptureDuration = 0
+        Deptharray, RGBarray, CaptureDuration = cm.CaptureBurst(5,mode=0)
+        #Deptharray, RGBarray = cm.Capture()
         Xpos = Ypos = Zpos = 1
         TimeStamp = datetime.datetime.now().strftime(p.dateformatting)
 
@@ -20,18 +21,31 @@ def CaptureImage():
         dict = {"Xpos": Xpos,
                 "YPos": Ypos,
                 "ZPos": Zpos,
-                "RGBarray": RGBarray.tolist(),
-                "Deptharray": Deptharray.tolist(),
+                "RGBarray": RGBarray,
+                "Deptharray": Deptharray,
                 "TimeStamp": TimeStamp,
                 "CaptureDuraction": CaptureDuration
                 }
         return dict
 
-cm.initCamera()
-dict = CaptureImage()
 
-jh.saveDict2Json(dict)
-exit()
+printString = ("[0] capture image\n[1] show capture\n[2] show depthmap")
+print(printString)
+select = int(input())
+if select == 0:
+        cm.initCamera()
+        dict = CaptureImage()
+        jh.saveDict2Json(dict)
+if select == 1:
+        dv.showCapture()
+
+if select == 2:
+        dv.showDepthmap()
+
+        
+        exit()
+
+
 # Choose action
 
 

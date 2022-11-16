@@ -36,17 +36,23 @@ def showCapture():
     plt.imshow(rgb)
     plt.subplot(1, 2, 2)
     plt.title("Depthmap")
-    plt.imshow(depth)
+    plt.imshow(depth,cmap='viridis')
     plt.show()
     print(rgb.max())
     return
-
 
 def showRGB(dict):
 
     return
 
 
-def showDepthmap(dict):
-
+def showDepthmap():
+    data = loadFile()
+    data = jh.Json2Dict(data)
+    depth = np.array(data["Deptharray"])
+    print("Data loaded successfully\nStart visualisation")
+    depth1d = np.reshape(depth, (1,-1))
+    plt.figure()
+    plt.hist(depth1d[0], bins=100)
+    plt.show()
     return

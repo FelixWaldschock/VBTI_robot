@@ -1,6 +1,7 @@
 import os
 import pyrealsense2 as rs
 import numpy as np
+import time
 
 pipe = None
 cfg = None
@@ -47,36 +48,44 @@ def stopCamera():
 
 
 def CaptureBurst(num, mode):  # mode = 0 for depth, mode = 1 for Both
-    starttime = os.cpu_count()
+    starttime = time.time()
     pipe.start(cfg)
-    depth_frame = []
-    color_frame = []
+    depthFrame = []
+    colorFrame = []
+   
     if (mode == 0):
-        for _ in range(num):
-            frameset = pipe.wait_for_frames()
-            depth_frame.append(frameset.get_depth_frame())
-        color_frame = frameset.get_color_frame()
-        print("Capture in Mode 0 complete")
-    elif (mode == 1):
         for _ in range(num):
             frameset = pipe.wait_for_frames()
             depth_frame = frameset.get_depth_frame()
             color_frame = frameset.get_color_frame()
+            depthFrame.append(np.asanyarray(depth_frame.get_data()).tolist())
+        colorFrame = np.asanyarray(color_frame.get_data()).tolist()
+    elif(mode == 1):
+        for _ in range(num):
+            frameset = pipe.wait_for_frames()
+            depth_frame = frameset.get_depth_frame()
+            color_frame = frameset.get_color_frame()
+            depthFrame.append(np.asanyarray(depth_frame.get_data()).tolist())
+            colorFrame.append(np.asanyarray(color_frame.get_data()).tolist())
 
     else:
-        (print("Error: Burst mode not defined"))
+        print("Invalid mode")
+        exit()
 
     stopCamera()
-    stoptime = os.cpu_count()
+    stoptime = time.time()
     captureDuration = stoptime - starttime
     print("Capture Duration: ", captureDuration)
-    #return np.asanyarray(depth_frame.get_data()), np.asanyarray(color_frame.get_data()), captureDuration
-    return depth_frame, color_frame, captureDuration
+    return depthFrame, colorFrame, captureDuration
+
 
 def Capture():
+    starttime = time.time()
     pipe.start(cfg)
     frameset = pipe.wait_for_frames()
     depth_frame = frameset.get_depth_frame()
     color_frame = frameset.get_color_frame()
     stopCamera()
-    return np.asanyarray(depth_frame.get_data()), np.asanyarray(color_frame.get_data())
+    stoptime = time.time()
+    captureDuration = stoptime - starttime
+    return np.asanyarray(depth_frame.get_data()), np.asanyarray(color_frame.get_data()), captureDuration
