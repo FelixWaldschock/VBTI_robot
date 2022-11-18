@@ -1,24 +1,6 @@
+import time
 import numpy as np
 import json
-
-
-# Encode using numpy arrays
-# def encode(array):
-
-#     output = np.empty((0, 2))
-
-#     flattened = array.reshape(-1, arr.shape[-1])
-#     current_value = flattened[0]
-#     current_frequency = 1
-
-#     for pixel in flattened:
-#         if np.equal(pixel, current_value).all():
-#             current_frequency += 1
-#         else:
-#             np.append(
-#                 output, [[current_frequency, current_value]], axis=0)
-#             current_value = pixel
-#             current_frequency = 1
 
 
 # Encode Using Python Lists
@@ -52,13 +34,13 @@ def encode(array):
     # Add the last value and repeat to the output list
     output.append((current_repeat, current_value))
 
-    output = np.array(output)
+    # output = np.array(output, dtype=object)
 
     # Return the output list
     return output
 
 
-def decode(input, height, width):
+def decode(input):
     # Redundancy compression
     # Decode a list of frequencies+values to a numpy array
     # The input is a list of (repeat, value) tuples
@@ -76,8 +58,21 @@ def decode(input, height, width):
     # Convert the output list to a numpy array
     output = np.array(output)
 
+    return output
+
+
+def decode_rgb(input, height, width):
+    output = decode(input)
     # Reshape the array to the original shape
     output = output.reshape(height, width, 3)
+
+    return output
+
+
+def decode_depth(input, height, width):
+    output = decode(input)
+    # Reshape the array to the original shape
+    output = output.reshape(height, width)
 
     return output
 
@@ -91,11 +86,25 @@ inputDict = json.loads(inputFile)
 arr = np.array(inputDict["RGBarray"])
 
 
+# Start timer
+start_time = time.time()
 encoded = encode(arr)
-decoded = decode(encoded, arr.shape[0], arr.shape[1])  # 720, 1280
+duration = time.time() - start_time
+print("Encode time: ", duration)
+
+start_time = time.time()
+decoded = decode_rgb(encoded, arr.shape[0], arr.shape[1])  # 720, 1280
+duration = time.time() - start_time
+print("Decode time: ", duration)
 
 print("Is decoded == arr?", np.equal(decoded, arr).all())
 print(f'Original array size: {arr.shape}')
 print(f'Encoded array size: {len(encoded)}')
+rate = len(encoded) / (arr.shape[0] * arr.shape[1])
 
+print(rate*100)
+
+
+# Output:
+print(encoded)
 # print(encoded)
