@@ -81,6 +81,16 @@ def decodeRGB(input, height, width):
     return output
 
 
+def encodeJson(jsonFilePath):
+
+    return encodedJson
+
+
+def decodeJson(encodedJson):
+
+    return json
+
+
 def encodeDepth(array):
     output = []
     return output

@@ -52,7 +52,7 @@ def CaptureBurst(num, mode):  # mode = 0 for depth, mode = 1 for Both
     pipe.start(cfg)
     depthFrame = []
     colorFrame = []
-   
+
     if (mode == 0):
         for _ in range(num):
             frameset = pipe.wait_for_frames()
@@ -60,7 +60,7 @@ def CaptureBurst(num, mode):  # mode = 0 for depth, mode = 1 for Both
             color_frame = frameset.get_color_frame()
             depthFrame.append(np.asanyarray(depth_frame.get_data()).tolist())
         colorFrame = np.asanyarray(color_frame.get_data()).tolist()
-    elif(mode == 1):
+    elif (mode == 1):
         for _ in range(num):
             frameset = pipe.wait_for_frames()
             depth_frame = frameset.get_depth_frame()
