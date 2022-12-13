@@ -12,8 +12,9 @@ IP = '192.168.188.41'
 app = Flask(__name__)
 
 @app.route('/')
+
 def index():
-    return '''
+    """return '''
         <html>
             <head>
                 <style>
@@ -33,13 +34,15 @@ def index():
                         <label>x: <input type="number" name="x" /></label>
                         <label>z: <input type="number" name="z" /></label>
                         <input type="submit" value="submit" />
+                        <input type="submit" value="CaptureImage" />
                     </div>
                 </form>
             </body>
         </html>
-    '''
+    '''"""
 
 @app.route('/', methods=['POST'])
+
 def save_xz():
     # Extract x and z values from form data
     x = request.form['x']
