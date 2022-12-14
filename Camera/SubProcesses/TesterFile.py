@@ -1,51 +1,29 @@
-import jsonHandler as jh
+import finishedPath as fp
 import random
-import datetime
-import numpy as np
-import camerModule as cm
-import parameters as p
-import DataVisualisation as dv
-import Compressor as comp
+import matplotlib.pyplot as plt
 
 
+path = fp.finishedPath()
+path.printPoints()
 
+# input
+for _ in range(100):
+    path.X.append(random.randint(0, 100))
+    path.Y.append(0)
+    path.Z.append(random.randint(0, 100))
 
-def CaptureImage():
+path.printPoints()
 
-        #Deptharray, RGBarray, CaptureDuration = cm.CaptureBurst(5,mode=0)
-        Deptharray, RGBarray, CaptureDuration = cm.Capture()
-        Xpos = Ypos = Zpos = 1
-        TimeStamp = datetime.datetime.now().strftime(p.dateformatting)
+# plot
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.scatter(path.X, path.Y, path.Z, c='r', marker='o')
+ax.set_xlabel('X Label')
+ax.set_ylabel('Y Label')
+ax.set_zlabel('Z Label')
 
-        # Structure of the JSON file containing capture information
-        dict = {"Xpos": Xpos,
-                "YPos": Ypos,
-                "ZPos": Zpos,
-                "RGBarray": RGBarray,
-                "Deptharray": Deptharray,
-                "TimeStamp": TimeStamp,
-                "CaptureDuraction": CaptureDuration
-                }
-        return dict
+# save to png
+plt.savefig('test.png')
 
-
-printString = ("[0] capture image\n[1] show capture\n[2] show depthmap")
-print(printString)
-select = int(input())
-if select == 0:
-        cm.initCamera()
-        dict = CaptureImage()
-        jh.saveDict2Json(dict)
-if select == 1:
-        dv.showCapture()
-
-if select == 2:
-        dv.showDepthmap()
-
-        
-        exit()
-
-
-# Choose action
-
-
+# show
+plt.show()

@@ -6,7 +6,6 @@ import time
 pipe = None
 cfg = None
 
-
 def initCamera():
     global pipe, cfg
     # Create Pipeline

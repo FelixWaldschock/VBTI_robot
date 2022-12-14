@@ -5,6 +5,10 @@ import time
 import os
 import socket
 
+# Import cameraModule.py
+import cameraModule as cm
+
+
 # get IP of raspi
 #IP = os.system('hostname -I')
 IP = '192.168.223.77'
@@ -12,8 +16,8 @@ IP = '192.168.223.77'
 # Flask app code
 app = Flask(__name__)
 
-@app.route('/')
 
+@app.route('/')
 def index():
     return '''
         <html>
@@ -41,8 +45,8 @@ def index():
         </html>
     '''
 
-@app.route('/', methods=['POST'])
 
+@app.route('/', methods=['POST'])
 def save_xz():
     # Extract x and z values from form data
     x = request.form['x']
@@ -58,6 +62,8 @@ def save_xz():
     return 'x: {}, z: {}'.format(x, z)
 
 # Serial communication code
+
+
 def send_values(X_end, Z_end):
     X = int(0)
     Y = int(0)
@@ -70,7 +76,8 @@ def send_values(X_end, Z_end):
     ser.reset_input_buffer()
     while X <= X_end:
         for Z in range(0, Z_end+1, Z_step):
-            Finalstring1 = "Sent by Rpi:        " + str(X) + "," + str(Y) + "," + str(Z) 
+            Finalstring1 = "Sent by Rpi:        " + \
+                str(X) + "," + str(Y) + "," + str(Z)
             Finalstring2 = str(X) + "," + str(Y) + "," + str(Z)
             print(Finalstring1)
             ser.write(Finalstring2.encode("utf-8"))
@@ -78,12 +85,14 @@ def send_values(X_end, Z_end):
             line = ser.readline().decode('utf-8').rstrip()
             line2 = "Robot at location:  " + line
             print(line2)
+            cm.Capture()
 
         # Increment X by X_step
         X += X_step
         if X <= X_end:
             for Z in range(Z_end, -1, -Z_step):
-                Finalstring1 = "Sent by Rpi:        " + str(X) + "," + str(Y) + "," + str(Z)             
+                Finalstring1 = "Sent by Rpi:        " + \
+                    str(X) + "," + str(Y) + "," + str(Z)
                 Finalstring2 = str(X) + "," + str(Y) + "," + str(Z)
                 print(Finalstring1)
                 ser.write(Finalstring2.encode("utf-8"))
@@ -91,11 +100,11 @@ def send_values(X_end, Z_end):
                 line = ser.readline().decode('utf-8').rstrip()
                 line2 = "Robot at location:  " + line
                 print(line2)
+                cm.Capture()
 
             # Increment X by 20
             X += X_step
 
-def start_webinterface():
-    app.run(debug=True, host=IP)
 
-start_webinterface()
+if __name__ == '__main__':
+    app.run(host=IP, port=5000, debug=True)
