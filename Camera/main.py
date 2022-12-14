@@ -7,6 +7,7 @@ import cv2
 import pandas as pd
 import pyrealsense2 as rs
 import serial
+import threading
 
 # Import custom libraries
 from SubProcesses import webinterface as web
@@ -15,11 +16,16 @@ from SubProcesses import cameraModule as cM
 # init camera
 cM.initCamera()
 
+
+# thread for webinterface
+web_thread = threading.Thread(target=web.start_webinterface)
+
+
 # start process
 if __name__ == '__main__':
 
     # start webinterface
-    web.start_webinterface()
+    web_thread.start()
 
     # wait for webinterface inputs
     print("Waiting for webinterface inputs...")

@@ -1,4 +1,3 @@
-#!/usr/bin/python
 from flask import Flask, request
 import serial
 import time
@@ -7,13 +6,12 @@ import socket
 
 # get IP of raspi
 #IP = os.system('hostname -I')
-IP = '192.168.223.77'
+IP = '192.168.188.41'
 
 # Flask app code
 app = Flask(__name__)
 
 @app.route('/')
-
 def index():
     return '''
         <html>
@@ -42,7 +40,6 @@ def index():
     '''
 
 @app.route('/', methods=['POST'])
-
 def save_xz():
     # Extract x and z values from form data
     x = request.form['x']
@@ -95,7 +92,5 @@ def send_values(X_end, Z_end):
             # Increment X by 20
             X += X_step
 
-def start_webinterface():
+if __name__ == '__main__':
     app.run(debug=True, host=IP)
-
-start_webinterface()
