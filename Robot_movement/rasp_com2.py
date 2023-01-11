@@ -63,26 +63,26 @@ def save_xz():
     z_step = int(z_step)
     phi = int(phi)
     r = int(r)
-    send_values_cameramount(phi,r)
+    #send_values_cameramount(phi,r)
     # Call send_values() function and pass x and z values as arguments
     send_values_lift(x,x_step,z, z_step,options)
 
     return 'x: {}, z: {}'.format(x, z)
 
 # Serial communication code
-def send_values_cameramount(phi,r):
-    ser_camera_mount = serial.Serial('/dev/ttyACM1', 115200)
-    ser_camera_mount.reset_input_buffer()
-    wakeUp = "0,0"
-    ser_camera_mount.write(wakeUp.encode("utf-8"))
-    time.sleep(1)
-    position_camera_mount = str(phi) + "," + str(r)
-    position_camera_mount2 = "Sent by Rpi(phi,r): " + str(phi) + "," + str(r)
-    print(position_camera_mount2)
-    ser_camera_mount.write(position_camera_mount.encode("utf-8"))
-    handshake = ser_camera_mount.read()
-    handshake2 = "handshake from cameramount:  " + handshake
-    print(handshake2)
+#def send_values_cameramount(phi,r):
+#    ser_camera_mount = serial.Serial('/dev/ttyACM1', 115200)
+#    ser_camera_mount.reset_input_buffer()
+#    wakeUp = "0,0"
+#    ser_camera_mount.write(wakeUp.encode("utf-8"))
+#    time.sleep(1)
+#    position_camera_mount = str(phi) + "," + str(r)
+#    position_camera_mount2 = "Sent by Rpi(phi,r): " + str(phi) + "," + str(r)
+#    print(position_camera_mount2)
+#    ser_camera_mount.write(position_camera_mount.encode("utf-8"))
+#    handshake = ser_camera_mount.read()
+#    #handshake2 = "handshake from cameramount:  " + handshake
+#    print(handshake)
     
 def send_values_lift(X_end,X_step, Z_end,Z_step,options):
     X = int(0)
@@ -102,12 +102,12 @@ def send_values_lift(X_end,X_step, Z_end,Z_step,options):
                 print(position_lift_carriage)
                 ser_lift_carriage.write(position_lift_carriage2.encode("utf-8"))
                 handshake = ser_lift_carriage.read()
-                handshake2 = "handshake from lift/carriage:  " + handshake
-                print(handshake2)
-            
-
-        # Increment X by X_step
+                print(handshake)
+                time.sleep(2)
             X += X_step
+            time.sleep(2)            
+
+
             if X <= X_end:
                 for Z in range(Z_end, -1, -Z_step):
                     position_lift_carriage = "Sent by Rpi (x,z):" + str(X)  + "," + str(Z)             
@@ -115,10 +115,10 @@ def send_values_lift(X_end,X_step, Z_end,Z_step,options):
                     print(position_lift_carriage)
                     ser_lift_carriage.write(position_lift_carriage2.encode("utf-8"))
                     handshake = ser_lift_carriage.read()
-                    handshake2 = "handshake from lift/carriage:  " + handshake
-                    print(handshake2)
+                    print(handshake)
+                    time.sleep(2)
 
-                # Increment X by 20
+                time.sleep(2)
                 X += X_step
 
     elif options == 2:
@@ -129,8 +129,8 @@ def send_values_lift(X_end,X_step, Z_end,Z_step,options):
                 print(position_lift_carriage)
                 ser_lift_carriage.write(position_lift_carriage2.encode("utf-8"))
                 handshake = ser_lift_carriage.read()
-                handshake2 = "handshake from lift/carriage:  " + handshake
-                print(handshake2)
+                print(handshake)
+                time.sleep(2)
 
     elif options == 3:
                 position_lift_carriage = "Sent by Rpi (x,z):" + str(X) + ","  + str(Z) 
@@ -138,8 +138,8 @@ def send_values_lift(X_end,X_step, Z_end,Z_step,options):
                 print(position_lift_carriage)
                 ser_lift_carriage.write(position_lift_carriage2.encode("utf-8"))
                 handshake = ser_lift_carriage.read()
-                handshake2 = "handshake from lift/carriage:  " + handshake
-                print(handshake2)
+                print(handshake)
+                time.sleep(2)
 
 if __name__ == '__main__':
     app.run(debug=True, host='192.168.137.18')
