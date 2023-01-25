@@ -77,10 +77,18 @@ def save_xz():
     phi = int(phi)
 
     send_values_cameramount(phi)
- 
     send_values_lift(x,x_step,z, z_step,options,phi)
-
     return index()
+
+def print_values(X,Z,phi):
+    position_lift_carriage = "Sent by Rpi (x,z):" + str(X) + ","  + str(Z)
+    position_lift_carriage2 = str(X) + "," + str(Z)
+    print(position_lift_carriage)
+    ser_lift_carriage.write(position_lift_carriage2.encode("utf-8"))
+    handshake = ser_lift_carriage.read()
+    print(handshake)
+    time.sleep(1)
+    CM.main(X,Z,phi)
 
 
 # Serial communication code
@@ -104,137 +112,50 @@ def send_values_lift(X_end,X_step, Z_end,Z_step,options,phi):
     if options == 1:
         for X in range(0,X_end+1,X_step):
             for Z in range(0, Z_end+1, Z_step):
-                position_lift_carriage = "Sent by Rpi (x,z):" + str(X) + ","  + str(Z)
-                position_lift_carriage2 = str(X) + "," + str(Z)
-                print(position_lift_carriage)
-                ser_lift_carriage.write(position_lift_carriage2.encode("utf-8"))
-                handshake = ser_lift_carriage.read()
-                print(handshake)
-                time.sleep(1)
-                CM.main(X,Z,phi)
-
-                
-
+                print_values(X,Z,phi)
             Z = 0
-            position_lift_carriage = "Sent by Rpi (x,z):" + str(X) + ","  + str(Z) 
-            position_lift_carriage2 = str(X) + "," + str(Z)
-            print(position_lift_carriage)
-            ser_lift_carriage.write(position_lift_carriage2.encode("utf-8"))
-            handshake = ser_lift_carriage.read()
-            print(handshake)
+            print_values(X,Z,phi)
             time.sleep(1)
             CM.main(X,Z,phi)
 
     if options == 2:
         for X in range(0,X_end+1,X_step):
             for Z in range(0, Z_end+1, Z_step):
-                position_lift_carriage = "Sent by Rpi (x,z):" + str(X) + ","  + str(Z)
-                position_lift_carriage2 = str(X) + "," + str(Z)
-                print(position_lift_carriage)
-                ser_lift_carriage.write(position_lift_carriage2.encode("utf-8"))
-                handshake = ser_lift_carriage.read()
-                print(handshake)
-                time.sleep(1)
-                CM.main(X,Z,phi)
-
+                print_values(X,Z,phi)
             Z = 0
-
             if X < X_end:
-                position_lift_carriage = "Sent by Rpi (x,z):" + str(X) + ","  + str(Z)
-                position_lift_carriage2 = str(X) + "," + str(Z)
-                print(position_lift_carriage)
-                ser_lift_carriage.write(position_lift_carriage2.encode("utf-8"))
-                handshake = ser_lift_carriage.read()
-                print(handshake)
-                time.sleep(1)
-                CM.main(X,Z,phi)
-        
+                print_values(X,Z,phi)    
         send_values_cameramount(-180)
         phi += 180
 
         for X in range(X_end,-1,-X_step):
             for Z in range(0, Z_end+1, Z_step):
-                position_lift_carriage = "Sent by Rpi (x,z):" + str(X) + ","  + str(Z)
-                position_lift_carriage2 = str(X) + "," + str(Z)
-                print(position_lift_carriage)
-                ser_lift_carriage.write(position_lift_carriage2.encode("utf-8"))
-                handshake = ser_lift_carriage.read()
-                print(handshake)
-                time.sleep(1)
-                CM.main(X,Z,phi)
-
-                
+                print_values(X,Z,phi)
             Z = 0
-            position_lift_carriage = "Sent by Rpi (x,z):" + str(X) + ","  + str(Z)
-            position_lift_carriage2 = str(X) + "," + str(Z)
-            print(position_lift_carriage)
-            ser_lift_carriage.write(position_lift_carriage2.encode("utf-8"))
-            handshake = ser_lift_carriage.read()
-            print(handshake)
-            time.sleep(1)
-            CM.main(X,Z,phi)
+            print_values(X,Z,phi)
         send_values_cameramount(180)
         phi -= 180
 
     elif options == 3:
-                position_lift_carriage = "Sent by Rpi (x,z):" + str(X_step) + ","  + str(Z_step)
-                position_lift_carriage2 = str(X_step) + "," + str(Z_step)
-                print(position_lift_carriage)
-                ser_lift_carriage.write(position_lift_carriage2.encode("utf-8"))
-                handshake = ser_lift_carriage.read()
-                print(handshake)
-                time.sleep(1)
-                CM.main(X_step,Z_step,phi)
+        print_values(X_step,Z_step,phi)
 
     elif options == 4:
         while True:
             for X in range(0,X_end+1,X_step):
                 for Z in range(0, Z_end+1, Z_step):
-                    position_lift_carriage = "Sent by Rpi (x,z):" + str(X) + ","  + str(Z)
-                    position_lift_carriage2 = str(X) + "," + str(Z)
-                    print(position_lift_carriage)
-                    ser_lift_carriage.write(position_lift_carriage2.encode("utf-8"))
-                    handshake = ser_lift_carriage.read()
-                    print(handshake)
-                    time.sleep(1)
-                    CM.main(X,Z,phi)
-
+                    print_values(X,Z,phi)
                 Z = 0
                 if X < X_end:
-                    position_lift_carriage = "Sent by Rpi (x,z):" + str(X) + ","  + str(Z)
-                    position_lift_carriage2 = str(X) + "," + str(Z)
-                    print(position_lift_carriage)
-                    ser_lift_carriage.write(position_lift_carriage2.encode("utf-8"))
-                    handshake = ser_lift_carriage.read()
-                    print(handshake)
-                    time.sleep(1)
-                    CM.main(X,Z,phi)
-        
+                    print_values(X,Z,phi)        
             send_values_cameramount(-180)
             phi += 180
 
             for X in range(X_end,-1,-X_step):
                 for Z in range(0, Z_end+1, Z_step):
-                    position_lift_carriage = "Sent by Rpi (x,z):" + str(X) + ","  + str(Z)
-                    position_lift_carriage2 = str(X) + "," + str(Z)
-                    print(position_lift_carriage)
-                    ser_lift_carriage.write(position_lift_carriage2.encode("utf-8"))
-                    handshake = ser_lift_carriage.read()
-                    print(handshake)
-                    time.sleep(1)
-                    CM.main(X,Z,phi)
-
-                
+                    print_values(X,Z,phi)               
                 Z = 0
                 if 0 < X:
-                    position_lift_carriage = "Sent by Rpi (x,z):" + str(X) + ","  + str(Z)
-                    position_lift_carriage2 = str(X) + "," + str(Z)
-                    print(position_lift_carriage)
-                    ser_lift_carriage.write(position_lift_carriage2.encode("utf-8"))
-                    handshake = ser_lift_carriage.read()
-                    print(handshake)
-                    time.sleep(1)
-                    CM.main(X,Z,phi)
+                    print_values(X,Z,phi)
             send_values_cameramount(180)
             phi -= 180
 
