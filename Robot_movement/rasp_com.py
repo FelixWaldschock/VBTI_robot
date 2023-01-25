@@ -1,9 +1,24 @@
 from flask import Flask, request
 import serial
 import time
+import CameraModule as CM
+
+# connect controllino to raspberry pi twice to reset the controllino
+ser_lift_carriage  = serial.Serial('/dev/ttyACM1', 115200)
+ser_lift_carriage.reset_input_buffer()
+time.sleep(1)
+ser_camera_mount = serial.Serial('/dev/ttyACM0', 115200)
+ser_camera_mount.reset_input_buffer()
+time.sleep(1)
+ser_lift_carriage  = serial.Serial('/dev/ttyACM1', 115200)
+ser_lift_carriage.reset_input_buffer()
+time.sleep(1)
+ser_camera_mount = serial.Serial('/dev/ttyACM0', 115200)
+ser_camera_mount.reset_input_buffer()
+time.sleep(1)
+
 
 # Flask app code
-
 app = Flask(__name__)
 
 @app.route('/')
@@ -25,9 +40,19 @@ def index():
             <body>
                 <form method="POST">
                     <div>
-                        <label>x: <input type="number" name="x" /></label>
-                        <label>z: <input type="number" name="z" /></label>
-                        <input type="submit" value="submit" />
+                        <label>Select an mode:
+                            <select name="options">
+                            <option value="1">1. one row</option>
+                            <option value="2">2. two rows</option>
+                            <option value="3">3. Go to a desired position</option>
+                            <option value="4">4. Demo mode</option>
+                        </select>
+                        <label>Length of row [cm]: <input type="number" name="x" /></label>
+                        <label>Step horizontal direction [cm]: <input type="number" name="x_step" /></label>
+                        <label>Heigth of row [cm]: <input type="number" name="z" /></label>
+                        <label>Step vertical direction [cm]: <input type="number" name="z_step" /></label>
+                        <label>Starting angle [degree]: <input type="number" name="phi" /></label>
+                        <input type="submit" value="Submit" />
                     </div>
                 </form>
             </body>
@@ -38,55 +63,184 @@ def index():
 def save_xz():
     # Extract x and z values from form data
     x = request.form['x']
+    x_step = request.form['x_step']
     z = request.form['z']
-
-    # Convert x and z values to integers
+    z_step = request.form['z_step']
+    phi = request.form['phi']
+    options = request.form['options']
+        
+    options = int(options)
     x = int(x)
+    x_step = int(x_step)
     z = int(z)
+    z_step = int(z_step)
+    phi = int(phi)
 
-    # Call send_values() function and pass x and z values as arguments
-    send_values(x, z)
+    send_values_cameramount(phi)
+ 
+    send_values_lift(x,x_step,z, z_step,options,phi)
 
-    return 'x: {}, z: {}'.format(x, z)
+    return index()
+
 
 # Serial communication code
-
-def send_values(X_end, Z_end):
+def send_values_cameramount(phi):
+    wakeUpcamera_mount = "0"
+    ser_camera_mount.write(wakeUpcamera_mount.encode("utf-8"))
+    time.sleep(1)
+    position_camera_mount = str(phi)
+    position_camera_mount2 = "Sent by Rpi(phi): " + str(phi)
+    print(position_camera_mount2)
+    ser_camera_mount.write(position_camera_mount.encode("utf-8"))
+    handshake = ser_camera_mount.read()
+    print(handshake)
+    
+def send_values_lift(X_end,X_step, Z_end,Z_step,options,phi):
     X = int(0)
-    Y = int(0)
     Z = int(0)
-
-    X_step = 20
-    Z_step = 20
-
-    ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
-    ser.reset_input_buffer()
-    while X <= X_end:
-        for Z in range(0, Z_end+1, Z_step):
-            Finalstring1 = "Sent by Rpi:        " + str(X) + "," + str(Y) + "," + str(Z) 
-            Finalstring2 = str(X) + "," + str(Y) + "," + str(Z)
-            print(Finalstring1)
-            ser.write(Finalstring2.encode("utf-8"))
-            time.sleep(1)
-            line = ser.readline().decode('utf-8').rstrip()
-            line2 = "Robot at location:  " + line
-            print(line2)
-
-        # Increment X by X_step
-        X += X_step
-        if X <= X_end:
-            for Z in range(Z_end, -1, -Z_step):
-                Finalstring1 = "Sent by Rpi:        " + str(X) + "," + str(Y) + "," + str(Z)             
-                Finalstring2 = str(X) + "," + str(Y) + "," + str(Z)
-                print(Finalstring1)
-                ser.write(Finalstring2.encode("utf-8"))
+    if Z_end > 290:
+        Z_end = 290
+        
+    if options == 1:
+        for X in range(0,X_end+1,X_step):
+            for Z in range(0, Z_end+1, Z_step):
+                position_lift_carriage = "Sent by Rpi (x,z):" + str(X) + ","  + str(Z)
+                position_lift_carriage2 = str(X) + "," + str(Z)
+                print(position_lift_carriage)
+                ser_lift_carriage.write(position_lift_carriage2.encode("utf-8"))
+                handshake = ser_lift_carriage.read()
+                print(handshake)
                 time.sleep(1)
-                line = ser.readline().decode('utf-8').rstrip()
-                line2 = "Robot at location:  " + line
-                print(line2)
+                CM.main(X,Z,phi)
 
-            # Increment X by 20
-            X += X_step
+                
+
+            Z = 0
+            position_lift_carriage = "Sent by Rpi (x,z):" + str(X) + ","  + str(Z) 
+            position_lift_carriage2 = str(X) + "," + str(Z)
+            print(position_lift_carriage)
+            ser_lift_carriage.write(position_lift_carriage2.encode("utf-8"))
+            handshake = ser_lift_carriage.read()
+            print(handshake)
+            time.sleep(1)
+            CM.main(X,Z,phi)
+
+    if options == 2:
+        for X in range(0,X_end+1,X_step):
+            for Z in range(0, Z_end+1, Z_step):
+                position_lift_carriage = "Sent by Rpi (x,z):" + str(X) + ","  + str(Z)
+                position_lift_carriage2 = str(X) + "," + str(Z)
+                print(position_lift_carriage)
+                ser_lift_carriage.write(position_lift_carriage2.encode("utf-8"))
+                handshake = ser_lift_carriage.read()
+                print(handshake)
+                time.sleep(1)
+                CM.main(X,Z,phi)
+
+            Z = 0
+
+            if X < X_end:
+                position_lift_carriage = "Sent by Rpi (x,z):" + str(X) + ","  + str(Z)
+                position_lift_carriage2 = str(X) + "," + str(Z)
+                print(position_lift_carriage)
+                ser_lift_carriage.write(position_lift_carriage2.encode("utf-8"))
+                handshake = ser_lift_carriage.read()
+                print(handshake)
+                time.sleep(1)
+                CM.main(X,Z,phi)
+        
+        send_values_cameramount(-180)
+        phi += 180
+
+        for X in range(X_end,-1,-X_step):
+            for Z in range(0, Z_end+1, Z_step):
+                position_lift_carriage = "Sent by Rpi (x,z):" + str(X) + ","  + str(Z)
+                position_lift_carriage2 = str(X) + "," + str(Z)
+                print(position_lift_carriage)
+                ser_lift_carriage.write(position_lift_carriage2.encode("utf-8"))
+                handshake = ser_lift_carriage.read()
+                print(handshake)
+                time.sleep(1)
+                CM.main(X,Z,phi)
+
+                
+            Z = 0
+            position_lift_carriage = "Sent by Rpi (x,z):" + str(X) + ","  + str(Z)
+            position_lift_carriage2 = str(X) + "," + str(Z)
+            print(position_lift_carriage)
+            ser_lift_carriage.write(position_lift_carriage2.encode("utf-8"))
+            handshake = ser_lift_carriage.read()
+            print(handshake)
+            time.sleep(1)
+            CM.main(X,Z,phi)
+        send_values_cameramount(180)
+        phi -= 180
+
+    elif options == 3:
+                position_lift_carriage = "Sent by Rpi (x,z):" + str(X_step) + ","  + str(Z_step)
+                position_lift_carriage2 = str(X_step) + "," + str(Z_step)
+                print(position_lift_carriage)
+                ser_lift_carriage.write(position_lift_carriage2.encode("utf-8"))
+                handshake = ser_lift_carriage.read()
+                print(handshake)
+                time.sleep(1)
+                CM.main(X_step,Z_step,phi)
+
+    elif options == 4:
+        while True:
+            for X in range(0,X_end+1,X_step):
+                for Z in range(0, Z_end+1, Z_step):
+                    position_lift_carriage = "Sent by Rpi (x,z):" + str(X) + ","  + str(Z)
+                    position_lift_carriage2 = str(X) + "," + str(Z)
+                    print(position_lift_carriage)
+                    ser_lift_carriage.write(position_lift_carriage2.encode("utf-8"))
+                    handshake = ser_lift_carriage.read()
+                    print(handshake)
+                    time.sleep(1)
+                    CM.main(X,Z,phi)
+
+                Z = 0
+                if X < X_end:
+                    position_lift_carriage = "Sent by Rpi (x,z):" + str(X) + ","  + str(Z)
+                    position_lift_carriage2 = str(X) + "," + str(Z)
+                    print(position_lift_carriage)
+                    ser_lift_carriage.write(position_lift_carriage2.encode("utf-8"))
+                    handshake = ser_lift_carriage.read()
+                    print(handshake)
+                    time.sleep(1)
+                    CM.main(X,Z,phi)
+        
+            send_values_cameramount(-180)
+            phi += 180
+
+            for X in range(X_end,-1,-X_step):
+                for Z in range(0, Z_end+1, Z_step):
+                    position_lift_carriage = "Sent by Rpi (x,z):" + str(X) + ","  + str(Z)
+                    position_lift_carriage2 = str(X) + "," + str(Z)
+                    print(position_lift_carriage)
+                    ser_lift_carriage.write(position_lift_carriage2.encode("utf-8"))
+                    handshake = ser_lift_carriage.read()
+                    print(handshake)
+                    time.sleep(1)
+                    CM.main(X,Z,phi)
+
+                
+                Z = 0
+                if 0 < X:
+                    position_lift_carriage = "Sent by Rpi (x,z):" + str(X) + ","  + str(Z)
+                    position_lift_carriage2 = str(X) + "," + str(Z)
+                    print(position_lift_carriage)
+                    ser_lift_carriage.write(position_lift_carriage2.encode("utf-8"))
+                    handshake = ser_lift_carriage.read()
+                    print(handshake)
+                    time.sleep(1)
+                    CM.main(X,Z,phi)
+            send_values_cameramount(180)
+            phi -= 180
+
 
 if __name__ == '__main__':
-    app.run(debug=True, host='192.168.137.18')
+    app.run(debug=True, host='192.168.137.150')
+
+
+
